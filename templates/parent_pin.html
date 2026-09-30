@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}親管理PIN{% endblock %}
+
+{% block body %}
+
+<header class="page-header">
+
+    <button type="button" class="back" onclick="history.back()">
+    ‹
+</button>
+
+    <h1>親管理</h1>
+
+    <div></div>
+
+</header>
+
+
+<section class="pin-page">
+
+    <div class="pin-icon">
+        👨‍👩‍👧
+    </div>
+
+
+    <h2>
+        おうちの人用
+    </h2>
+
+
+    <p>
+        PINコードを入力してください
+    </p>
+
+
+    <form method="POST">
+
+        <input
+            type="password"
+            name="pin"
+            maxlength="4"
+            inputmode="numeric"
+            class="pin-input"
+            placeholder="••••"
+            required>
+
+
+        <button
+            type="submit"
+            class="main-button">
+
+            親管理を開く
+
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

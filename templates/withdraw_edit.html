@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}出金を編集{% endblock %}
+
+{% block body %}
+
+<header class="page-header">
+    <button type="button" class="back" onclick="history.back()">
+    ‹
+</button>
+    <h1>出金を編集</h1>
+    <div></div>
+</header>
+
+<section class="form-page">
+
+    <form method="POST">
+
+        <label>
+            何に使った？
+        </label>
+
+        <select
+            name="category"
+            class="select-input">
+
+            {% for category in categories %}
+
+            <option
+                value="{{ category }}"
+                {% if transaction.category == category %}
+                selected
+                {% endif %}>
+
+                {{ category }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <label>
+            金額
+        </label>
+
+        <div class="money-input">
+
+            <input
+                type="number"
+                name="amount"
+                value="{{ transaction.amount }}"
+                required>
+
+            <span>円</span>
+
+        </div>
+
+
+        <button
+            class="main-button"
+            type="submit">
+
+            変更する
+
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

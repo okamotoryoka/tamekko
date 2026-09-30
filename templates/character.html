@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+キャラ
+{% endblock %}
+
+
+{% block body %}
+
+
+<!-- ==================================
+     ヘッダー
+=================================== -->
+
+<header class="header">
+
+    <button type="button" class="back" onclick="history.back()">
+    ‹
+</button>
+
+
+    <h1>
+        キャラ
+    </h1>
+
+
+    <div class="coin-box">
+
+        <span class="coin-icon">
+            🪙
+        </span>
+
+        <span class="coin-number">
+            {{ account.coin }}
+        </span>
+
+    </div>
+
+</header>
+
+
+
+<!-- ==================================
+     キャラクター情報
+=================================== -->
+
+<section class="character-profile">
+
+
+    <!-- アイコン -->
+    <div class="profile-circle">
+
+        <img
+            src="{{ url_for('static', filename='images/' + pet_image) }}"
+            alt="みどりん">
+
+    </div>
+
+
+
+    <!-- キャラ情報 -->
+    <div class="profile-info">
+
+
+        <div class="character-name">
+            {{ account.pet }}
+        </div>
+
+
+        <div class="level">
+            Lv.{{ account.level }}
+        </div>
+
+
+        <!-- 経験値 -->
+        <div class="exp-area">
+
+
+            <div class="exp-bar">
+
+                <div class="exp-progress">
+                </div>
+
+            </div>
+
+
+            <span class="exp-text">
+                あと120
+            </span>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==================================
+     キャラクター表示
+=================================== -->
+
+<section class="character-field">
+
+
+    <img
+        class="main-character"
+        src="{{ url_for('static', filename='images/' + pet_image) }}"
+        alt="みどりん">
+
+
+</section>
+
+
+
+<!-- ==================================
+     なかよし度
+=================================== -->
+
+<section class="friendship">
+
+
+    <span class="friend-label">
+        💗 なかよし度
+    </span>
+
+
+    <span class="hearts">
+        ♥ ♥ ♥ ♡ ♡
+    </span>
+
+
+
+
+</section>
+
+
+
+<!-- ==================================
+     ごはん・あそぶ・アイテム
+=================================== -->
+
+<section class="action-menu">
+
+    <button class="action-card food-card">
+
+        <img
+            src="{{ url_for('static', filename='images/rice.png') }}"
+            alt="ごはん"
+        >
+
+    </button>
+
+
+    <button class="action-card play-card">
+
+        <img
+            src="{{ url_for('static', filename='images/play.png') }}"
+            alt="あそぶ"
+        >
+
+    </button>
+
+
+    <a
+        href="/items"
+        class="action-card item-card"
+    >
+
+        <img
+            src="{{ url_for('static', filename='images/item.png') }}"
+            alt="アイテム"
+        >
+
+    </a>
+
+</section>
+
+
+<!-- =========================
+     ミッション・遠征
+========================= -->
+<div class="character-sub-actions">
+
+    <!-- ミッション -->
+    <a href="/missions"
+       class="character-sub-button mission-button">
+
+        <span class="sub-action-icon">⭐</span>
+
+        <span>ミッション</span>
+
+    </a>
+
+
+    <!-- 遠征 -->
+    <a href="/expedition"
+       class="character-sub-button expedition-button">
+
+        <span class="sub-action-icon">🗺️</span>
+
+        <span>遠征に行く</span>
+
+    </a>
+
+</div>
+
+
+<!-- =========================
+     進化
+========================= -->
+<button class="evolution-button">
+    🐾 進化を見る 🐾
+</button>
+
+
+
+
+{% endblock %}

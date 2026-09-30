@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>{% block title %}ためっこ{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260930">
+</head>
+<body>
+  <div class="phone">
+    {% with msgs = get_flashed_messages() %}
+      {% for m in msgs %}
+        <div class="flash">{{ m }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    {% block body %}{% endblock %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}PIN変更{% endblock %}
+
+{% block body %}
+
+<header class="page-header">
+
+    <button type="button" class="back" onclick="history.back()">
+    ‹
+</button>
+
+    <h1>PINコード変更</h1>
+
+    <div></div>
+
+</header>
+
+
+<section class="pin-page">
+
+    <div class="pin-icon">
+        🔑
+    </div>
+
+
+    <form method="POST">
+
+        <label>
+            新しいPINコード
+        </label>
+
+        <input
+            type="password"
+            name="new_pin"
+            maxlength="4"
+            inputmode="numeric"
+            class="pin-input"
+            placeholder="4桁"
+            required>
+
+
+        <button
+            type="submit"
+            class="main-button">
+
+            PINを変更する
+
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

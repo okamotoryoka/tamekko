@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% block title %}お金を記録{% endblock %}{% block body %}
+<div class="wf-page keypad-page">
+  <button type="button" class="wf-back money-input-back" onclick="history.back()">‹</button>
+  <div class="money-top"><div><small>ひつよう</small><b>{{'{:,}'.format(account.balance)}}円</b></div><a href="/">ついか</a></div>
+  <div class="money-top second"><div><small>ほしいもの</small><b>{{'{:,}'.format(account.balance)}}円</b></div></div>
+  <div class="amount-display"><span id="amountText">0</span>円</div>
+
+  <form id="moneyForm" method="post" action="/money-input">
+    <input type="hidden" name="mode" id="mode" value="{{mode}}">
+    <input type="hidden" name="amount" id="amount" value="0">
+    <div id="categoryArea" class="category-tabs">
+      {% for c in categories %}<label><input type="radio" name="category" value="{{c}}" {% if loop.first %}checked{% endif %}><span>{{c}}</span></label>{% endfor %}
+    </div>
+    <div id="depositMessage" class="deposit-message">ためたお金を入力してね</div>
+    <div class="keypad">
+      {% for n in ['7','8','9','4','5','6','1','2','3','00','0'] %}<button type="button" data-key="{{n}}">{{n}}</button>{% endfor %}
+      <button type="button" data-key="back">⌫</button>
+    </div>
+    <button class="mode-switch" type="button" id="modeSwitch">{% if mode == 'deposit' %}つかったにかえる{% else %}ためたにかえる{% endif %}</button>
+    <button class="submit-money" type="submit" id="submitBtn">{% if mode == 'deposit' %}ためたお金を申請する{% else %}つかったお金を記録する{% endif %}</button>
+  </form>
+  <div class="wf-wide-actions single"><a href="/settings">⚙️<b>設定</b></a><a href="/history">📝<b>記録</b></a><a href="/transactions" class="money">💰<b>入出金</b></a></div>
+</div>
+<script>
+let value='';const amount=document.getElementById('amount'),text=document.getElementById('amountText'),mode=document.getElementById('mode'),cats=document.getElementById('categoryArea'),msg=document.getElementById('depositMessage'),sw=document.getElementById('modeSwitch'),submit=document.getElementById('submitBtn');
+function draw(){const n=parseInt(value||'0',10);amount.value=n;text.textContent=n.toLocaleString('ja-JP')}
+function modeDraw(){const dep=mode.value==='deposit';cats.style.display=dep?'none':'flex';msg.style.display=dep?'block':'none';sw.textContent=dep?'つかったにかえる':'ためたにかえる';submit.textContent=dep?'ためたお金を申請する':'つかったお金を記録する'}
+document.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{const k=b.dataset.key;if(k==='back')value=value.slice(0,-1);else if(value.length<7)value+=k;draw()});
+sw.onclick=()=>{mode.value=mode.value==='deposit'?'withdrawal':'deposit';modeDraw()};modeDraw();
+</script>
+{% endblock %}{% block nav %}{% endblock %}

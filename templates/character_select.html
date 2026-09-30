@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}ペットを選ぶ{% endblock %}
+
+{% block body %}
+
+<header class="page-header">
+
+    <button type="button" class="back" onclick="history.back()">
+    ‹
+</button>
+
+    <h1>ペットを選ぶ</h1>
+
+    <div></div>
+
+</header>
+
+
+<section class="pet-select-page">
+
+    <p>
+        いっしょに貯金するペットを選んでね！
+    </p>
+
+
+    <form method="POST">
+
+        {% for pet in pets %}
+
+        <label class="pet-select-card">
+
+            <input
+                type="radio"
+                name="pet"
+                value="{{ pet }}"
+                {% if account.pet == pet %}
+                checked
+                {% endif %}>
+
+            <div>
+
+                <strong>
+                    {{ pet }}
+                </strong>
+
+                {% if account.pet == pet %}
+
+                <span>
+                    いまのペット
+                </span>
+
+                {% endif %}
+
+            </div>
+
+        </label>
+
+        {% endfor %}
+
+
+        <button
+            type="submit"
+            class="main-button">
+
+            このペットにする
+
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

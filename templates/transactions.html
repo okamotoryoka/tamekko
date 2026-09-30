@@ -1,0 +1,2101 @@
+{% extends "base.html" %}
+
+{% block title %}入出金{% endblock %}
+
+{% block body %}
+
+<style>
+html,
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100%;
+    background: #edf4f7 !important;
+}
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Hiragino Kaku Gothic ProN",
+        "Yu Gothic",
+        sans-serif;
+}
+
+.money-screen,
+.money-screen * {
+    box-sizing: border-box;
+}
+
+.money-screen {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+
+    margin: 0 auto;
+    padding: 0 18px 25px;
+
+    background: #ffffff;
+
+    color: #10223b;
+}
+
+
+/* ==================================================
+   ヘッダー
+================================================== */
+
+.money-header {
+    position: relative;
+
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 -18px 13px;
+
+    border-bottom: 1px solid #e3e9ed;
+
+    background: #ffffff;
+}
+
+.money-header-title {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.money-back {
+    position: absolute;
+
+    left: 16px;
+    top: 5px;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 2px solid #4dc1f0;
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    color: #268fbd;
+
+    font-size: 25px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+/* ==================================================
+   キャラクター
+================================================== */
+
+.money-character-area {
+    height: 90px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-bottom: 10px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe9e9,
+            #fff1b9
+        );
+}
+
+.money-pet {
+    width: 70px;
+    height: 70px;
+
+    object-fit: contain;
+}
+
+.money-speech {
+    max-width: 170px;
+
+    padding: 9px 12px;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.85);
+
+    color: #10223b;
+
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+
+/* ==================================================
+   Flash
+================================================== */
+
+.money-flash {
+    margin: 7px 0 10px;
+
+    padding: 9px 12px;
+
+    border-radius: 13px;
+
+    background: #fff2bd;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* ==================================================
+   ★ 入力金額表示カード
+   以前の「いまの貯金」の位置
+================================================== */
+
+.balance-box {
+    width: 100%;
+    min-height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 11px;
+
+    padding: 10px 16px;
+
+    border-radius: 20px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 5px 20px rgba(30, 65, 90, 0.07);
+}
+
+
+/*
+   「いまの貯金」という文字は非表示
+*/
+
+.balance-label {
+    display: none;
+}
+
+
+/*
+   この部分に入力中金額を表示
+*/
+
+.balance-money {
+    color: #10223b;
+
+    font-size: 38px;
+    font-weight: 800;
+
+    line-height: 1;
+
+    text-align: center;
+}
+
+
+/* ==================================================
+   以前の中央金額表示は非表示
+================================================== */
+
+.money-amount {
+    display: none !important;
+}
+
+
+/* ==================================================
+   つかった / ためた
+================================================== */
+
+.money-tabs {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 9px;
+
+    margin-bottom: 13px;
+}
+
+.money-tab {
+    height: 46px;
+
+    border: 1px solid #d5e0e6;
+    border-radius: 15px;
+
+    background: #ffffff;
+
+    color: #10223b;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.money-tab.active {
+    border-color: #ff79a4;
+
+    background: #ff7ba5;
+
+    color: #ffffff;
+}
+
+
+/* ==================================================
+   出金・入金カード
+================================================== */
+
+#withdrawalPanel,
+#depositPanel {
+    padding: 14px;
+
+    border-radius: 21px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 5px 20px rgba(30, 65, 90, 0.07);
+}
+
+
+/* ==================================================
+   質問
+================================================== */
+
+.money-question {
+    margin: 0 0 9px;
+
+    color: #263b50;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+
+/* ==================================================
+   カテゴリ
+================================================== */
+
+.money-categories {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 7px;
+}
+
+.money-category {
+    height: 42px;
+
+    padding: 0 2px;
+
+    border: 1px solid #d1dde4;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #10223b;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.money-category.active {
+    border-color: #ffba58;
+
+    background: #fff0c8;
+}
+
+.money-category.saved {
+    border-color: #7bd494;
+
+    background: #e2f7e7;
+}
+
+
+/* ==================================================
+   選択中カテゴリ
+================================================== */
+
+.selected-category-text {
+    min-height: 18px;
+
+    margin: 8px 0 7px;
+
+    color: #526375;
+
+    text-align: center;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* ==================================================
+   電卓
+================================================== */
+
+.money-keypad {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 6px;
+}
+
+.money-key {
+    height: 39px;
+
+    padding: 0;
+
+    border: 1px solid #d7e0e5;
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: #10223b;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.money-key:hover {
+    background: #f3faff;
+}
+
+.money-key:active {
+    transform: scale(0.97);
+
+    background: #eaf7fd;
+}
+
+
+/* ==================================================
+   他の分類を追加
+================================================== */
+
+.money-add {
+    width: 100%;
+    height: 39px;
+
+    margin-top: 8px;
+
+    border: 1px solid #f2c862;
+    border-radius: 12px;
+
+    background: #fff5ce;
+
+    color: #7c5c00;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.money-add:hover {
+    background: #ffefb2;
+}
+
+
+/* ==================================================
+   追加済み分類
+================================================== */
+
+.money-added-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    margin-top: 7px;
+}
+
+.money-added-empty {
+    display: none;
+}
+
+.money-added-row {
+    min-height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 4px 9px;
+
+    border-radius: 10px;
+
+    background: #f4f8fa;
+
+    color: #34475a;
+
+    font-size: 11px;
+}
+
+.money-added-name {
+    font-weight: 700;
+}
+
+.money-added-right {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+}
+
+.money-added-right strong {
+    color: #10223b;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+
+/* ==================================================
+   取消
+================================================== */
+
+.money-cancel-button {
+    padding: 4px 8px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #ffe3eb;
+
+    color: #e34e78;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.money-cancel-button:hover {
+    background: #ffd4df;
+}
+
+.money-cancel-button:active {
+    transform: scale(0.96);
+}
+
+
+/* ==================================================
+   合計
+================================================== */
+
+.money-total {
+    display: flex;
+
+    justify-content: flex-end;
+    align-items: baseline;
+
+    gap: 6px;
+
+    margin: 7px 2px;
+
+    color: #526273;
+
+    font-size: 11px;
+}
+
+.money-total strong {
+    color: #10223b;
+
+    font-size: 19px;
+    font-weight: 800;
+}
+
+
+/* ==================================================
+   記録ボタン
+================================================== */
+
+.money-submit {
+    width: 100%;
+    height: 44px;
+
+    border: none;
+    border-radius: 22px;
+
+    background: #ff729d;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.money-submit:hover {
+    background: #ff648f;
+}
+
+
+/* ==================================================
+   入金画面
+================================================== */
+
+.deposit-title {
+    margin: 0 0 7px;
+
+    color: #263b50;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.deposit-money-row {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 14px;
+}
+
+.deposit-money-input {
+    width: 100%;
+    height: 48px;
+
+    padding: 0 13px;
+
+    border: 1px solid #d2dde4;
+    border-radius: 12px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #10223b;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    text-align: right;
+}
+
+.deposit-yen {
+    color: #10223b;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.deposit-memo {
+    width: 100%;
+    height: 47px;
+
+    padding: 0 13px;
+
+    border: 1px solid #d2dde4;
+    border-radius: 12px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #10223b;
+
+    font-size: 14px;
+}
+
+.deposit-money-input:focus,
+.deposit-memo:focus {
+    border-color: #55bced;
+}
+
+.deposit-help {
+    margin: 11px 0;
+
+    padding: 10px 12px;
+
+    border-radius: 12px;
+
+    background: #f4f9fc;
+
+    color: #536677;
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+/* ==================================================
+   下ナビ非表示
+================================================== */
+
+.bottom-nav,
+.bottom-navigation,
+nav.bottom-nav {
+    display: none !important;
+}
+
+
+/* ==================================================
+   小さい画面
+================================================== */
+
+@media (max-width: 390px) {
+
+    .money-screen {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .money-header {
+        margin-left: -14px;
+        margin-right: -14px;
+    }
+
+    .money-character-area {
+        height: 82px;
+    }
+
+    .money-pet {
+        width: 64px;
+        height: 64px;
+    }
+
+    .money-speech {
+        max-width: 150px;
+
+        padding: 7px 9px;
+
+        font-size: 10px;
+    }
+
+    .balance-box {
+        min-height: 60px;
+    }
+
+    .balance-money {
+        font-size: 34px;
+    }
+
+    .money-key {
+        height: 37px;
+    }
+}
+</style>
+
+
+<div class="money-screen">
+
+
+    <!-- ==================================================
+         ヘッダー
+    ================================================== -->
+
+    <div class="money-header">
+
+        <button
+            type="button"
+            class="money-back"
+            onclick="history.back()"
+        >
+            ‹
+        </button>
+
+        <div class="money-header-title">
+            入出金
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         キャラクター
+    ================================================== -->
+
+    <div class="money-character-area">
+
+        <img
+            class="money-pet"
+            src="{{ url_for('static', filename='images/' ~ pet_image) }}"
+            alt="みどりん"
+        >
+
+        <div class="money-speech">
+            1日1回記録しよう<br>
+            お金を上手につかおう！
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         Flash
+    ================================================== -->
+
+    {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+
+            <div class="money-flash">
+
+                {% for message in messages %}
+
+                    <div>
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- ==================================================
+         現在の貯金
+    ================================================== -->
+
+    <div class="balance-box">
+
+    <span
+        id="topInputAmount"
+        class="balance-money"
+    >
+        0円
+    </span>
+
+</div>
+
+
+    <!-- ==================================================
+         つかった / ためた
+    ================================================== -->
+
+    <div class="money-tabs">
+
+        <button
+            type="button"
+            id="withdrawalTab"
+            class="money-tab"
+            onclick="changeMoneyMode('withdrawal')"
+        >
+            つかった
+        </button>
+
+
+        <button
+            type="button"
+            id="depositTab"
+            class="money-tab"
+            onclick="changeMoneyMode('deposit')"
+        >
+            ためた
+        </button>
+
+    </div>
+
+
+    <!-- ==================================================
+         出金
+    ================================================== -->
+
+    <div id="withdrawalPanel">
+
+        <form
+            method="POST"
+            action="{{ url_for('transactions') }}"
+            onsubmit="return submitWithdrawal();"
+        >
+
+            <input
+                type="hidden"
+                name="type"
+                value="withdrawal"
+            >
+
+
+            <input
+                type="hidden"
+                name="amount_necessary"
+                id="hiddenNecessary"
+                value="0"
+            >
+
+
+            <input
+                type="hidden"
+                name="amount_want"
+                id="hiddenWant"
+                value="0"
+            >
+
+
+            <input
+                type="hidden"
+                name="amount_waste"
+                id="hiddenWaste"
+                value="0"
+            >
+
+
+            <!-- 分類 -->
+
+            <div class="money-question">
+                何につかった？
+            </div>
+
+
+            <div class="money-categories">
+
+                <button
+                    type="button"
+                    class="money-category"
+                    data-category="necessary"
+                    onclick="chooseCategory('necessary', this)"
+                >
+                    必要
+                </button>
+
+
+                <button
+                    type="button"
+                    class="money-category"
+                    data-category="want"
+                    onclick="chooseCategory('want', this)"
+                >
+                    ほしい
+                </button>
+
+
+                <button
+                    type="button"
+                    class="money-category"
+                    data-category="waste"
+                    onclick="chooseCategory('waste', this)"
+                >
+                    無駄づかい
+                </button>
+
+            </div>
+
+
+            <!-- 選択中 -->
+
+            <div
+                id="selectedCategoryText"
+                class="selected-category-text"
+            >
+                まず分類をえらんでね
+            </div>
+
+
+            <!-- 金額 -->
+
+            <div class="money-amount">
+
+                <span
+                    id="moneyAmount"
+                    class="money-amount-number"
+                >
+                    0
+                </span>
+
+                <span class="money-yen">
+                    円
+                </span>
+
+            </div>
+
+
+            <!-- ==================================================
+                 電卓
+            ================================================== -->
+
+            <div class="money-keypad">
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('7')"
+                >
+                    7
+                </button>
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('8')"
+                >
+                    8
+                </button>
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('9')"
+                >
+                    9
+                </button>
+
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('4')"
+                >
+                    4
+                </button>
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('5')"
+                >
+                    5
+                </button>
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('6')"
+                >
+                    6
+                </button>
+
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('1')"
+                >
+                    1
+                </button>
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('2')"
+                >
+                    2
+                </button>
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('3')"
+                >
+                    3
+                </button>
+
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('00')"
+                >
+                    00
+                </button>
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="inputNumber('0')"
+                >
+                    0
+                </button>
+
+                <button
+                    type="button"
+                    class="money-key"
+                    onclick="deleteNumber()"
+                >
+                    ⌫
+                </button>
+
+            </div>
+
+
+            <!-- ==================================================
+                 別分類追加
+            ================================================== -->
+
+            <button
+                type="button"
+                class="money-add"
+                onclick="addMoneyCategory()"
+            >
+                ＋ ほかの分類も追加する
+            </button>
+
+
+            <!-- ==================================================
+                 追加済み一覧
+            ================================================== -->
+
+            <div
+                id="addedList"
+                class="money-added-list"
+            >
+
+                <div class="money-added-empty">
+                    まだ追加されていません
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 合計
+            ================================================== -->
+
+            <div class="money-total">
+
+                <span>
+                    合計
+                </span>
+
+                <strong id="totalMoney">
+                    0円
+                </strong>
+
+            </div>
+
+
+            <!-- ==================================================
+                 登録
+            ================================================== -->
+
+            <button
+                type="submit"
+                class="money-submit"
+            >
+                つかったお金を記録する
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- ==================================================
+         入金
+    ================================================== -->
+
+    <div
+        id="depositPanel"
+        style="display:none;"
+    >
+
+        <form
+            method="POST"
+            action="{{ url_for('transactions') }}"
+        >
+
+            <input
+                type="hidden"
+                name="type"
+                value="deposit"
+            >
+
+
+            <div class="deposit-title">
+                いくらためた？
+            </div>
+
+
+            <div class="deposit-money-row">
+
+                <input
+                    type="number"
+                    class="deposit-money-input"
+                    name="amount"
+                    min="1"
+                    inputmode="numeric"
+                    placeholder="0"
+                    required
+                >
+
+                <span class="deposit-yen">
+                    円
+                </span>
+
+            </div>
+
+
+            <div class="deposit-title">
+                メモ
+            </div>
+
+
+            <input
+                type="text"
+                class="deposit-memo"
+                name="memo"
+                placeholder="お手伝い など"
+            >
+
+
+            <div class="deposit-help">
+                入金したお金は、おうちの人に申請されます。
+                承認されると貯金に追加されるよ。
+            </div>
+
+
+            <button
+                type="submit"
+                class="money-submit"
+            >
+                ためたお金を申請する
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==================================================
+   カテゴリ名
+================================================== */
+
+const categoryNames = {
+
+    necessary: "必要",
+
+    want: "ほしい",
+
+    waste: "無駄づかい"
+
+};
+
+
+/* ==================================================
+   保存済み金額
+================================================== */
+
+const savedAmounts = {
+
+    necessary: 0,
+
+    want: 0,
+
+    waste: 0
+
+};
+
+
+/* ==================================================
+   hidden input
+================================================== */
+
+const hiddenInputs = {
+
+    necessary: "hiddenNecessary",
+
+    want: "hiddenWant",
+
+    waste: "hiddenWaste"
+
+};
+
+
+/* 現在選択中の分類 */
+
+let selectedCategory = null;
+
+
+/* 現在入力中の数字 */
+
+let inputValue = "";
+
+
+/* ==================================================
+   つかった / ためた 切替
+================================================== */
+
+function changeMoneyMode(mode) {
+
+    const withdrawalPanel =
+        document.getElementById(
+            "withdrawalPanel"
+        );
+
+
+    const depositPanel =
+        document.getElementById(
+            "depositPanel"
+        );
+
+
+    const withdrawalTab =
+        document.getElementById(
+            "withdrawalTab"
+        );
+
+
+    const depositTab =
+        document.getElementById(
+            "depositTab"
+        );
+
+
+    if (mode === "deposit") {
+
+        withdrawalPanel.style.display =
+            "none";
+
+
+        depositPanel.style.display =
+            "block";
+
+
+        withdrawalTab.classList.remove(
+            "active"
+        );
+
+
+        depositTab.classList.add(
+            "active"
+        );
+
+    } else {
+
+        withdrawalPanel.style.display =
+            "block";
+
+
+        depositPanel.style.display =
+            "none";
+
+
+        withdrawalTab.classList.add(
+            "active"
+        );
+
+
+        depositTab.classList.remove(
+            "active"
+        );
+    }
+}
+
+
+/* ==================================================
+   分類選択
+================================================== */
+
+function chooseCategory(
+    category,
+    button
+) {
+
+    /*
+       追加済みの分類は
+       取消するまで再選択できない
+    */
+
+    if (
+        savedAmounts[category] > 0
+    ) {
+
+        return;
+    }
+
+
+    selectedCategory =
+        category;
+
+
+    inputValue =
+        "";
+
+
+    document
+        .querySelectorAll(
+            ".money-category"
+        )
+        .forEach(
+            function(btn) {
+
+                btn.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    button.classList.add(
+        "active"
+    );
+
+
+    document
+        .getElementById(
+            "selectedCategoryText"
+        )
+        .textContent =
+        categoryNames[category] +
+        " の金額を入力";
+
+
+    updateMoneyDisplay();
+}
+
+
+/* ==================================================
+   数字入力
+================================================== */
+
+function inputNumber(number) {
+
+    if (!selectedCategory) {
+
+        alert(
+            "先に分類をえらんでね"
+        );
+
+        return;
+    }
+
+
+    /*
+       先頭の不要な0を防止
+    */
+
+    if (
+        inputValue === "0"
+    ) {
+
+        inputValue = "";
+    }
+
+
+    inputValue += number;
+
+
+    /*
+       最大8桁
+    */
+
+    if (
+        inputValue.length > 8
+    ) {
+
+        inputValue =
+            inputValue.substring(
+                0,
+                8
+            );
+    }
+
+
+    updateMoneyDisplay();
+}
+
+
+/* ==================================================
+   1文字削除
+================================================== */
+
+function deleteNumber() {
+
+    if (!selectedCategory) {
+
+        return;
+    }
+
+
+    inputValue =
+        inputValue.slice(
+            0,
+            -1
+        );
+
+
+    updateMoneyDisplay();
+}
+
+
+/* ==================================================
+   金額表示
+================================================== */
+
+function updateMoneyDisplay() {
+
+    const amount =
+        parseInt(
+            inputValue || "0",
+            10
+        );
+
+    /* 上の大きい金額をリアルタイム更新 */
+    const topDisplay =
+        document.getElementById(
+            "topInputAmount"
+        );
+
+    if (topDisplay) {
+
+        topDisplay.textContent =
+            amount.toLocaleString(
+                "ja-JP"
+            ) + "円";
+    }
+
+
+    /* 古い金額表示がHTMLに残っていても更新 */
+    const oldDisplay =
+        document.getElementById(
+            "moneyAmount"
+        );
+
+    if (oldDisplay) {
+
+        oldDisplay.textContent =
+            amount.toLocaleString(
+                "ja-JP"
+            );
+    }
+}
+
+
+/* ==================================================
+   現在の入力を保存
+================================================== */
+
+function saveCurrentInput() {
+
+    if (!selectedCategory) {
+
+        return false;
+    }
+
+
+    const amount =
+        parseInt(
+            inputValue || "0",
+            10
+        );
+
+
+    if (amount <= 0) {
+
+        return false;
+    }
+
+
+    /*
+       金額保存
+    */
+
+    savedAmounts[
+        selectedCategory
+    ] = amount;
+
+
+    /*
+       Flaskに送るhiddenにも反映
+    */
+
+    document
+        .getElementById(
+            hiddenInputs[
+                selectedCategory
+            ]
+        )
+        .value =
+        amount;
+
+
+    /*
+       カテゴリボタンを
+       追加済み表示にする
+    */
+
+    const categoryButton =
+        document.querySelector(
+            '[data-category="' +
+            selectedCategory +
+            '"]'
+        );
+
+
+    if (categoryButton) {
+
+        categoryButton
+            .classList
+            .remove(
+                "active"
+            );
+
+
+        categoryButton
+            .classList
+            .add(
+                "saved"
+            );
+    }
+
+
+    selectedCategory =
+        null;
+
+
+    inputValue =
+        "";
+
+
+    updateMoneyDisplay();
+
+
+    updateAddedList();
+
+
+    return true;
+}
+
+
+/* ==================================================
+   ＋ほかの分類も追加する
+================================================== */
+
+function addMoneyCategory() {
+
+    if (!selectedCategory) {
+
+        alert(
+            "分類をえらんでね"
+        );
+
+        return;
+    }
+
+
+    const amount =
+        parseInt(
+            inputValue || "0",
+            10
+        );
+
+
+    if (amount <= 0) {
+
+        alert(
+            "金額を入力してね"
+        );
+
+        return;
+    }
+
+
+    /*
+       現在の入力を確定
+    */
+
+    saveCurrentInput();
+
+
+    /*
+       次にまだ入力していない
+       分類を探す
+    */
+
+    const nextCategory =
+        Object.keys(
+            savedAmounts
+        ).find(
+            function(category) {
+
+                return (
+                    savedAmounts[
+                        category
+                    ] === 0
+                );
+
+            }
+        );
+
+
+    /*
+       次の分類を自動選択
+    */
+
+    if (nextCategory) {
+
+        const nextButton =
+            document.querySelector(
+                '[data-category="' +
+                nextCategory +
+                '"]'
+            );
+
+
+        if (nextButton) {
+
+            chooseCategory(
+                nextCategory,
+                nextButton
+            );
+
+        }
+
+    } else {
+
+        document
+            .getElementById(
+                "selectedCategoryText"
+            )
+            .textContent =
+            "すべての分類を入力したよ";
+    }
+}
+
+
+/* ==================================================
+   追加済み一覧
+================================================== */
+
+function updateAddedList() {
+
+    const list =
+        document.getElementById(
+            "addedList"
+        );
+
+
+    list.innerHTML =
+        "";
+
+
+    let count = 0;
+
+    let total = 0;
+
+
+    Object.keys(
+        savedAmounts
+    ).forEach(
+        function(category) {
+
+            const amount =
+                savedAmounts[
+                    category
+                ];
+
+
+            if (amount > 0) {
+
+                count++;
+
+                total += amount;
+
+
+                /*
+                   1行
+                */
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "money-added-row";
+
+
+                /*
+                   分類名
+                */
+
+                const name =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                name.className =
+                    "money-added-name";
+
+
+                name.textContent =
+                    categoryNames[
+                        category
+                    ];
+
+
+                /*
+                   右側
+                */
+
+                const right =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                right.className =
+                    "money-added-right";
+
+
+                /*
+                   金額
+                */
+
+                const price =
+                    document.createElement(
+                        "strong"
+                    );
+
+
+                price.textContent =
+                    amount
+                        .toLocaleString(
+                            "ja-JP"
+                        ) +
+                    "円";
+
+
+                /*
+                   取消ボタン
+                */
+
+                const cancelButton =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                cancelButton.type =
+                    "button";
+
+
+                cancelButton.className =
+                    "money-cancel-button";
+
+
+                cancelButton.textContent =
+                    "取消";
+
+
+                cancelButton.onclick =
+                    function() {
+
+                        cancelCategory(
+                            category
+                        );
+
+                    };
+
+
+                /*
+                   右側に追加
+                */
+
+                right.appendChild(
+                    price
+                );
+
+
+                right.appendChild(
+                    cancelButton
+                );
+
+
+                /*
+                   行に追加
+                */
+
+                row.appendChild(
+                    name
+                );
+
+
+                row.appendChild(
+                    right
+                );
+
+
+                /*
+                   一覧に追加
+                */
+
+                list.appendChild(
+                    row
+                );
+            }
+
+        }
+    );
+
+
+    /*
+       何も登録していない場合
+    */
+
+    if (count === 0) {
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+
+        empty.className =
+            "money-added-empty";
+
+
+        empty.textContent =
+            "まだ追加されていません";
+
+
+        list.appendChild(
+            empty
+        );
+    }
+
+
+    /*
+       合計更新
+    */
+
+    document
+        .getElementById(
+            "totalMoney"
+        )
+        .textContent =
+        total.toLocaleString(
+            "ja-JP"
+        ) +
+        "円";
+}
+
+
+/* ==================================================
+   追加した分類を取消
+================================================== */
+
+function cancelCategory(category) {
+
+    /*
+       金額を0円に戻す
+    */
+
+    savedAmounts[
+        category
+    ] = 0;
+
+
+    /*
+       Flaskに送るhiddenも
+       0円に戻す
+    */
+
+    document
+        .getElementById(
+            hiddenInputs[
+                category
+            ]
+        )
+        .value =
+        0;
+
+
+    /*
+       分類ボタンを
+       再選択可能に戻す
+    */
+
+    const button =
+        document.querySelector(
+            '[data-category="' +
+            category +
+            '"]'
+        );
+
+
+    if (button) {
+
+        button.classList.remove(
+            "saved"
+        );
+
+
+        button.classList.remove(
+            "active"
+        );
+    }
+
+
+    /*
+       取消した分類を
+       入力中だった場合
+    */
+
+    if (
+        selectedCategory ===
+        category
+    ) {
+
+        selectedCategory =
+            null;
+
+
+        inputValue =
+            "";
+
+
+        updateMoneyDisplay();
+    }
+
+
+    /*
+       案内文
+    */
+
+    document
+        .getElementById(
+            "selectedCategoryText"
+        )
+        .textContent =
+        "分類をえらんでね";
+
+
+    /*
+       一覧と合計を更新
+    */
+
+    updateAddedList();
+}
+
+
+/* ==================================================
+   最終登録
+================================================== */
+
+function submitWithdrawal() {
+
+    /*
+       最後に入力している分類は、
+       ＋追加するを押していなくても
+       自動的に保存する
+    */
+
+    if (
+        selectedCategory &&
+        parseInt(
+            inputValue || "0",
+            10
+        ) > 0
+    ) {
+
+        saveCurrentInput();
+    }
+
+
+    /*
+       合計
+    */
+
+    const total =
+
+        savedAmounts.necessary +
+
+        savedAmounts.want +
+
+        savedAmounts.waste;
+
+
+    /*
+       0円なら送信しない
+    */
+
+    if (total <= 0) {
+
+        alert(
+            "使った金額を入力してね"
+        );
+
+        return false;
+    }
+
+
+    return true;
+}
+
+
+/* ==================================================
+   初期表示
+================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        const initialMode =
+            {{ mode|default("withdrawal")|tojson }};
+
+
+        if (
+            initialMode ===
+            "deposit"
+        ) {
+
+            changeMoneyMode(
+                "deposit"
+            );
+
+        } else {
+
+            changeMoneyMode(
+                "withdrawal"
+            );
+        }
+
+
+        /*
+           初期一覧表示
+        */
+
+        updateAddedList();
+
+    }
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}お小遣い設定{% endblock %}
+
+{% block body %}
+
+<header class="page-header">
+
+    <button type="button" class="back" onclick="history.back()">
+    ‹
+</button>
+
+    <h1>お小遣い設定</h1>
+
+    <div></div>
+
+</header>
+
+
+<section class="form-page">
+
+    <form method="POST">
+
+        <label>
+            1か月のお小遣い
+        </label>
+
+
+        <div class="money-input">
+
+            <input
+                type="number"
+                name="allowance"
+                value="{{ account.allowance }}"
+                required>
+
+            <span>円</span>
+
+        </div>
+
+
+        <label>
+            お小遣いをもらう日
+        </label>
+
+
+        <div class="money-input">
+
+            <input
+                type="number"
+                name="pay_day"
+                min="1"
+                max="31"
+                value="{{ account.pay_day }}"
+                required>
+
+            <span>日</span>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="main-button">
+
+            保存する
+
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,1183 @@
+{% extends "base.html" %}
+
+{% block title %}ホーム{% endblock %}
+
+{% block body %}
+
+<div class="game-home">
+
+    <!-- =====================================================
+         上部ステータス
+    ====================================================== -->
+    <section class="game-status">
+
+        <!-- レベル・経験値 -->
+        <div class="status-card">
+
+            <span>レベル・経験値</span>
+
+            <strong>
+                Lv.{{ account.level }}
+            </strong>
+
+            <div class="mini-exp-bar">
+                <div
+                    class="mini-exp-fill"
+                    style="width: {{ [account.exp, 100] | min }}%;">
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- 貯金総額 -->
+        <div class="status-card savings-status">
+
+            <span>貯金総額</span>
+
+            <strong>
+                {{ "{:,}".format(account.balance) }}円
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         げんき度・コイン
+    ====================================================== -->
+    <section class="sub-status">
+
+        <div class="energy-box">
+
+            <span>げんき度</span>
+
+            <div class="energy-bar">
+                <div
+                    class="energy-progress"
+                    style="width: {{ account.energy }}%;">
+                </div>
+            </div>
+
+            <b>
+                {{ account.energy }}%
+            </b>
+
+        </div>
+
+
+        <div class="home-coin">
+            🪙 {{ account.coin }}
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         キャラクターの部屋
+    ====================================================== -->
+    <section class="home-room">
+
+
+        <!-- =================================================
+             キャラクター
+        ================================================== -->
+        <div class="home-pet-area">
+
+            <!-- 吹き出し -->
+            <div
+                class="pet-talk"
+                id="petTalk">
+
+                きょうもいっしょに<br>
+                がんばろう！
+
+            </div>
+
+
+            <!-- キャラクター -->
+            <img
+                id="homePet"
+                class="home-pet-character"
+                src="{{ url_for(
+                    'static',
+                    filename='images/' ~ pet_image
+                ) }}"
+                alt="{{ account.pet }}"
+            >
+
+
+            <!-- キャラの影 -->
+            <div class="home-pet-shadow"></div>
+
+
+            <!-- キャラ名 -->
+            <strong class="pet-name">
+                {{ account.pet }}
+            </strong>
+
+        </div>
+
+
+        <!-- =================================================
+             右側
+             ショップ・ミッション・図鑑
+        ================================================== -->
+        <div class="side-menu">
+
+
+            <!-- =============================
+                 ショップ
+            ============================== -->
+            <button
+                type="button"
+                class="side-icon-button"
+                onclick="openHomePopup('shopPopup')">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='images/shop.png'
+                    ) }}"
+                    alt="ショップ"
+                >
+
+                <span>
+                    ショップ
+                </span>
+
+            </button>
+
+
+            <!-- =============================
+                 ミッション
+            ============================== -->
+            <button
+                type="button"
+                class="side-icon-button"
+                onclick="openHomePopup('missionPopup')">
+
+                <div class="side-icon-wrapper">
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='images/misson.png'
+                        ) }}"
+                        alt="ミッション"
+                    >
+
+                    {% if missions %}
+                    <i class="mission-count">
+                        {{ missions|length }}
+                    </i>
+                    {% endif %}
+
+                </div>
+
+                <span>
+                    ミッション
+                </span>
+
+            </button>
+
+
+            <!-- =============================
+                 図鑑
+            ============================== -->
+            <button
+                type="button"
+                class="side-icon-button"
+                onclick="openHomePopup('bookPopup')">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='images/book.png'
+                    ) }}"
+                    alt="図鑑"
+                >
+
+                <span>
+                    図鑑
+                </span>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         目標達成率
+    ====================================================== -->
+    <section class="goal-progress-card">
+
+        <div class="goal-progress-top">
+
+            <div>
+
+                <small>
+                    目標達成率
+                </small>
+
+                <strong>
+                    {{ account.goal_name }}
+                </strong>
+
+            </div>
+
+            <b>
+                {{ goal_percent }}%
+            </b>
+
+        </div>
+
+
+        <div class="goal-progress-bar">
+
+            <div
+                class="goal-progress-fill"
+                style="width: {{ goal_percent }}%;">
+            </div>
+
+        </div>
+
+
+        <div class="goal-money">
+
+            <span>
+                {{ "{:,}".format(account.balance) }}円
+            </span>
+
+            <span>
+                /
+                {{ "{:,}".format(account.goal_amount) }}円
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         目標・遠征・アイテム
+    ====================================================== -->
+    <section class="main-icon-menu">
+
+
+        <!-- =============================
+             目標
+             → 専用画面
+        ============================== -->
+        <a
+            href="{{ url_for('goal') }}"
+            class="main-icon-button">
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/goal.png'
+                ) }}"
+                alt="目標"
+            >
+
+            <span>
+                目標
+            </span>
+
+        </a>
+
+
+        <!-- =============================
+             遠征
+             → 専用画面
+        ============================== -->
+        <a
+            href="{{ url_for('expedition') }}"
+            class="main-icon-button">
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/walk.png'
+                ) }}"
+                alt="遠征"
+            >
+
+            <span>
+                遠征
+            </span>
+
+        </a>
+
+
+        <!-- =============================
+             アイテム
+             → ポップアップ
+        ============================== -->
+        <button
+            type="button"
+            class="main-icon-button"
+            onclick="openHomePopup('itemPopup')">
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/item.png'
+                ) }}"
+                alt="アイテム"
+            >
+
+            <span>
+                アイテム
+            </span>
+
+        </button>
+
+    </section>
+
+
+    <!-- =====================================================
+         設定・親管理・入出金
+    ====================================================== -->
+    <section class="bottom-icon-menu">
+
+
+        <!-- =============================
+             設定
+        ============================== -->
+        <a
+            href="{{ url_for('settings') }}"
+            class="bottom-icon-button">
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/setting.png'
+                ) }}"
+                alt="設定"
+            >
+
+            <span>
+                設定
+            </span>
+
+        </a>
+
+
+        <!-- =============================
+             親管理
+        ============================== -->
+        <a
+            href="{{ url_for('parent_pin') }}"
+            class="bottom-icon-button">
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/parents.png'
+                ) }}"
+                alt="親管理"
+            >
+
+            <span>
+                親管理
+            </span>
+
+        </a>
+
+
+        <!-- =============================
+             入出金
+        ============================== -->
+        <a
+            href="{{ url_for('transactions') }}"
+            class="bottom-icon-button money-button">
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/money.png'
+                ) }}"
+                alt="入出金"
+            >
+
+            <span>
+                入出金
+            </span>
+
+        </a>
+
+    </section>
+
+</div>
+
+
+<!-- =========================================================
+     ショップ ポップアップ
+========================================================= -->
+<div
+    id="shopPopup"
+    class="home-popup">
+
+    <div class="home-popup-panel">
+
+        <!-- 閉じる -->
+        <button
+            type="button"
+            class="popup-close"
+            onclick="closeHomePopup('shopPopup')">
+            ×
+        </button>
+
+
+        <!-- タイトル -->
+        <div class="popup-title-row">
+
+            <div class="popup-coin">
+                🪙 {{ account.coin }}
+            </div>
+
+            <h2>
+                ショップ
+            </h2>
+
+        </div>
+
+
+        <!-- 商品 -->
+        <div class="shop-grid popup-grid">
+
+            {% if shop_items %}
+
+                {% for item in shop_items %}
+
+                <div class="product">
+
+                    <!--
+                        item.image が設定されていれば
+                        PNG画像を表示
+                    -->
+                    {% if item.image %}
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='images/' ~ item.image
+                        ) }}"
+                        alt="{{ item.name }}"
+                        style="
+                            width:70px;
+                            height:70px;
+                            object-fit:contain;
+                        "
+                    >
+
+                    {% else %}
+
+                    <span>
+                        🎁
+                    </span>
+
+                    {% endif %}
+
+
+                    <b>
+                        {{ item.name }}
+                    </b>
+
+
+                    <small>
+                        🪙 {{ item.price }}
+                    </small>
+
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('buy_item', item_id=item.id) }}">
+
+                        <input
+                            type="hidden"
+                            name="return_popup"
+                            value="shop"
+                        >
+
+                        <button type="submit">
+                            購入
+                        </button>
+
+                    </form>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty wide">
+                    商品はまだありません
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     ミッション ポップアップ
+========================================================= -->
+<div
+    id="missionPopup"
+    class="home-popup">
+
+    <div class="home-popup-panel">
+
+        <!-- 閉じる -->
+        <button
+            type="button"
+            class="popup-close"
+            onclick="closeHomePopup('missionPopup')">
+            ×
+        </button>
+
+
+        <div class="popup-title-row">
+
+            <h2>
+                ミッション
+            </h2>
+
+        </div>
+
+
+        <div class="mission-list">
+
+            {% if missions %}
+
+                {% for mission in missions %}
+
+                <div class="mission">
+
+
+                    <!-- ミッション画像 -->
+                    <div class="round-icon">
+
+                        {% if mission.image %}
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='images/' ~ mission.image
+                            ) }}"
+                            alt="{{ mission.name }}"
+                            style="
+                                width:38px;
+                                height:38px;
+                                object-fit:contain;
+                            "
+                        >
+
+                        {% else %}
+
+                        ⭐
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ミッション内容 -->
+                    <div>
+
+                        <b>
+                            {{ mission.name }}
+                        </b>
+
+                        <small>
+                            {{ mission.description }}
+                        </small>
+
+
+                        <div class="progress">
+
+                            {% if mission.goal %}
+
+                                {% set mission_percent =
+                                    (mission.progress / mission.goal * 100)
+                                    | int
+                                %}
+
+                            {% else %}
+
+                                {% set mission_percent = 0 %}
+
+                            {% endif %}
+
+
+                            <i
+                                style="
+                                    width:
+                                    {{ [mission_percent, 100] | min }}%;
+                                ">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 報酬 -->
+                    <div class="reward">
+
+                        <small>
+                            🪙
+                            {{ mission.reward }}
+                        </small>
+
+
+                        {% if mission.status == "達成" %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'claim_mission',
+                                mission_id=mission.id
+                            ) }}">
+
+                            <input
+                                type="hidden"
+                                name="return_popup"
+                                value="mission"
+                            >
+
+                            <button type="submit">
+                                受取
+                            </button>
+
+                        </form>
+
+                        {% elif mission.status == "受取済み" %}
+
+                        <small>
+                            受取済み
+                        </small>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+                    ミッションはありません
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     図鑑 ポップアップ
+========================================================= -->
+<div
+    id="bookPopup"
+    class="home-popup">
+
+    <div class="home-popup-panel">
+
+        <!-- 閉じる -->
+        <button
+            type="button"
+            class="popup-close"
+            onclick="closeHomePopup('bookPopup')">
+            ×
+        </button>
+
+
+        <div class="popup-title-row">
+
+            <h2>
+                図鑑
+            </h2>
+
+        </div>
+
+
+        <!-- 現在のキャラクター -->
+        <div class="book-card">
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/' ~ pet_image
+                ) }}"
+                alt="{{ account.pet }}"
+            >
+
+            <div>
+
+                <b>
+                    {{ account.pet }}
+                </b>
+
+                <span>
+                    Lv.{{ account.level }}
+                </span>
+
+                <small>
+                    育成中
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- 未開放 -->
+        <div class="book-card locked">
+
+            <span>
+                ？
+            </span>
+
+            <div>
+
+                <b>
+                    ？？？
+                </b>
+
+                <small>
+                    まだ出会っていません
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="book-card locked">
+
+            <span>
+                ？
+            </span>
+
+            <div>
+
+                <b>
+                    ？？？
+                </b>
+
+                <small>
+                    条件を達成すると解放
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     アイテム ポップアップ
+========================================================= -->
+<div
+    id="itemPopup"
+    class="home-popup">
+
+    <div class="home-popup-panel">
+
+        <!-- 閉じる -->
+        <button
+            type="button"
+            class="popup-close"
+            onclick="closeHomePopup('itemPopup')">
+            ×
+        </button>
+
+
+        <div class="popup-title-row">
+
+            <h2>
+                アイテム
+            </h2>
+
+        </div>
+
+
+        <div class="shop-grid popup-grid">
+
+            {% if inventory %}
+
+                {% for item in inventory %}
+
+                <div class="product">
+
+
+                    <!-- アイテム画像 -->
+                    {% if item.image %}
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='images/' ~ item.image
+                        ) }}"
+                        alt="{{ item.name }}"
+                        style="
+                            width:70px;
+                            height:70px;
+                            object-fit:contain;
+                        "
+                    >
+
+                    {% else %}
+
+                    <span>
+                        🎁
+                    </span>
+
+                    {% endif %}
+
+
+                    <b>
+                        {{ item.name }}
+                    </b>
+
+
+                    {% if item.quantity is defined %}
+
+                    <small>
+                        × {{ item.quantity }}
+                    </small>
+
+                    {% endif %}
+
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'use_item',
+                            item_id=item.id
+                        ) }}">
+
+                        <input
+                            type="hidden"
+                            name="return_popup"
+                            value="item"
+                        >
+
+                        <button type="submit">
+                            つかう
+                        </button>
+
+                    </form>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty wide">
+                    アイテムを持っていません
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     JavaScript
+========================================================= -->
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        /* ================================================
+           キャラクター
+        ================================================= */
+
+        const pet =
+            document.getElementById("homePet");
+
+        const talk =
+            document.getElementById("petTalk");
+
+
+        if (pet) {
+
+            pet.addEventListener(
+                "click",
+                function () {
+
+                    pet.classList.remove(
+                        "pet-tap-jump"
+                    );
+
+                    void pet.offsetWidth;
+
+                    pet.classList.add(
+                        "pet-tap-jump"
+                    );
+
+
+                    if (talk) {
+
+                        talk.innerHTML =
+                            "えへへ！<br>うれしいな♪";
+
+
+                        setTimeout(
+                            function () {
+
+                                talk.innerHTML =
+                                    "きょうもいっしょに<br>がんばろう！";
+
+                            },
+                            1800
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* ================================================
+           URLに ?popup= が付いていた場合
+           自動でポップアップを開く
+
+           例：
+           /?popup=shop
+           /?popup=mission
+           /?popup=book
+           /?popup=item
+        ================================================= */
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const popup =
+            params.get("popup");
+
+
+        if (popup === "shop") {
+
+            openHomePopup(
+                "shopPopup"
+            );
+
+        }
+
+
+        if (popup === "mission") {
+
+            openHomePopup(
+                "missionPopup"
+            );
+
+        }
+
+
+        if (popup === "book") {
+
+            openHomePopup(
+                "bookPopup"
+            );
+
+        }
+
+
+        if (popup === "item") {
+
+            openHomePopup(
+                "itemPopup"
+            );
+
+        }
+
+
+        /* ================================================
+           ポップアップ外側を押したら閉じる
+        ================================================= */
+
+        document
+            .querySelectorAll(
+                ".home-popup"
+            )
+            .forEach(
+                function (popupElement) {
+
+                    popupElement.addEventListener(
+                        "click",
+                        function (event) {
+
+                            if (
+                                event.target ===
+                                popupElement
+                            ) {
+
+                                closeHomePopup(
+                                    popupElement.id
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+);
+
+
+/* =====================================================
+   ポップアップを開く
+===================================================== */
+
+function openHomePopup(id) {
+
+    const popup =
+        document.getElementById(id);
+
+
+    if (!popup) {
+        return;
+    }
+
+
+    /*
+        ほかのポップアップが開いていたら閉じる
+    */
+
+    document
+        .querySelectorAll(
+            ".home-popup.show"
+        )
+        .forEach(
+            function (element) {
+
+                element.classList.remove(
+                    "show"
+                );
+
+            }
+        );
+
+
+    popup.classList.add(
+        "show"
+    );
+
+
+    document.body.classList.add(
+        "popup-open"
+    );
+
+}
+
+
+/* =====================================================
+   ポップアップを閉じる
+===================================================== */
+
+function closeHomePopup(id) {
+
+    const popup =
+        document.getElementById(id);
+
+
+    if (!popup) {
+        return;
+    }
+
+
+    popup.classList.remove(
+        "show"
+    );
+
+
+    /*
+        他に開いているポップアップがなければ
+        bodyの固定を解除
+    */
+
+    if (
+        !document.querySelector(
+            ".home-popup.show"
+        )
+    ) {
+
+        document.body.classList.remove(
+            "popup-open"
+        );
+
+    }
+
+
+    /*
+        URLの ?popup=shop なども削除する
+    */
+
+    const url =
+        new URL(
+            window.location.href
+        );
+
+
+    if (
+        url.searchParams.has(
+            "popup"
+        )
+    ) {
+
+        url.searchParams.delete(
+            "popup"
+        );
+
+
+        window.history.replaceState(
+            {},
+            "",
+            url.pathname +
+            url.search
+        );
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

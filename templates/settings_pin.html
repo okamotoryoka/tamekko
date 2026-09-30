@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}PIN認証{% endblock %}
+
+{% block body %}
+
+<div class="page-content">
+
+    <header class="page-header">
+
+        <button type="button" class="back" onclick="history.back()">
+    ‹
+</button>
+
+        <h1>PIN認証</h1>
+
+        <div></div>
+
+    </header>
+
+
+    <main class="pin-page">
+
+        <div class="pin-icon">
+            🔐
+        </div>
+
+        <h2>保護者PINを入力</h2>
+
+        <p class="form-description">
+            {{ setting_name }}を変更するには<br>
+            保護者のPIN認証が必要です
+        </p>
+
+
+        <form method="POST">
+
+            <input
+                type="password"
+                name="pin"
+                class="pin-input"
+                inputmode="numeric"
+                maxlength="4"
+                placeholder="••••"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="main-button"
+            >
+                認証する
+            </button>
+
+        </form>
+
+
+        <a
+            href="/menu"
+            class="normal-button"
+        >
+            キャンセル
+        </a>
+
+    </main>
+
+</div>
+
+{% endblock %}
+
+
+{% block nav %}
+{% endblock %}
